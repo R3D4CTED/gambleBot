@@ -20,3 +20,6 @@ After this, you're ready to run it!
 ## Credits
 [nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API.
 Respect and greetings to [Snaacky](https://github.com/snaacky), Stalker and Subby.
+
+### Further thoughts
+Might add the nhentai script in here. 🤔
