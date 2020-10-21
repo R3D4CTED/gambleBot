@@ -16,3 +16,7 @@ pip install discord.py
 Open up gambleTestBot.py in a text editor and enter the bot access token in the place specified at the end of the file. More details on how to do that over at [Discord developer portal](https://discord.com/developers/docs/intro).
 
 After this, you're ready to run it!
+
+## Credits
+[nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API.
+Respect and greetings to Snaacky, Stalker and Subby.
