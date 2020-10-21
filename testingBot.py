@@ -14,6 +14,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    print(message.author.display_name+":"+message.content)
     if message.author == client.user:
         return
 
@@ -67,15 +68,17 @@ async def on_message(message):
 
         elif (bet == "BLACK" or bet == "RED"):
             return
+        
         else:
             embedVar.add_field(name="You can't bet on that.",
                                value="Try again.", inline=False)
-    else:
-        return
-
+    
     try:
         await message.channel.send(embed=embedVar)
     except:
         return
 
-client.run('BOT_API_KEY_HERE')
+    
+
+client.run('BOT_KEY_HERE')
+
