@@ -78,4 +78,4 @@ async def on_message(message):
     except:
         return
 
-client.run('NzY1MTA1ODE1NTAxMDEyOTky.X4P-UQ.ePdeBOVLY-7NkCppGTw6qAwMN-Q')
+client.run('BOT_API_KEY_HERE')
