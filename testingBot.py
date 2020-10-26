@@ -35,10 +35,10 @@ async def on_message(message):
         try:
             n = int(message.content.split(' ')[1])
             embedVar.add_field(name="Random Number",
-                               value=random.randrange(n), inline=False)
+                               value=random.randrange(abs(n)), inline=False)
         except:
             embedVar.add_field(
-                name="ERROR.", value="Please enter a number for range.", inline=False)
+                name="ERROR.", value="Please enter a valid, non-zero number for range.", inline=False)
 
     if message.content.startswith(botPrefix+"neko"):
         URL = "https://nekos.life/api/neko"
