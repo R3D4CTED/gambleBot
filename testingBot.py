@@ -33,9 +33,9 @@ async def on_message(message):
         embedVar = discord.Embed(title="Requested by "+message.author.display_name,
                                  description="Random number generating!", color=0x00ff00)
         try:
-            n = int(message.content.split(' ')[1])
+            n = float(message.content.split(' ')[1])
             embedVar.add_field(name="Random Number",
-                               value=random.randrange(abs(n)), inline=False)
+                               value=random.randrange(int(abs(n))), inline=False)
         except:
             embedVar.add_field(
                 name="ERROR.", value="Please enter a valid, non-zero number for range.", inline=False)
@@ -76,8 +76,5 @@ async def on_message(message):
         await message.channel.send(embed=embedVar)
     except:
         return
-
     
-
 client.run('BOT_KEY_HERE')
-
