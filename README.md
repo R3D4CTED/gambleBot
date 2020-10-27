@@ -18,7 +18,7 @@ Open up gambleTestBot.py in a text editor and enter the bot access token in the 
 After this, you're ready to run it!
 
 ## Credits
-[nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API.
+[nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API. Anilist for the waifu/anime-related stuff.
 Respect and greetings to [Snaacky](https://github.com/snaacky), Stalker and Subby.
 
 ### Further thoughts
