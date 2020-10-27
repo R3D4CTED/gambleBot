@@ -2,6 +2,7 @@ import discord
 import random
 import requests
 import json
+from anilistTest import searchWaifu
 
 client = discord.Client()
 botPrefix = '*'
@@ -44,6 +45,7 @@ async def on_message(message):
         URL = "https://nekos.life/api/neko"
         r = requests.get(url=URL)
         neko = (r.json()['neko'])
+        print(neko)
         embedVar = discord.Embed(
             title="Nekos!", description="Nyaa ~", color=0xccff00).set_image(url=neko)
 
@@ -51,6 +53,7 @@ async def on_message(message):
         URL = "https://waifu.pics/api/sfw/waifu"
         r = requests.get(url=URL)
         waifu = r.json()['url']
+        print(waifu)
         embedVar = discord.Embed(
             title="Waifu!", color=0x00ffcc).set_image(url=waifu)
 
@@ -71,10 +74,18 @@ async def on_message(message):
         else:
             embedVar.add_field(name="You can't bet on that.",
                                value="Try again.", inline=False)
+
+    if message.content.startswith(botPrefix+"search "):
+    	message_content=message.content.split(' ')
+    	waifu_name=""
+    	for temp in message_content:
+    		if (temp != botPrefix+"search"):
+    			waifu_name=waifu_name+temp+" "
+    	await message.channel.send(searchWaifu(waifu_name))
     
     try:
         await message.channel.send(embed=embedVar)
     except:
         return
     
-client.run('BOT_KEY_HERE')
+client.run('BOT_API_KEY_HERE')
