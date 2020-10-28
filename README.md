@@ -13,9 +13,10 @@ Install dependencies using:
 pip install requests
 pip install discord.py
 ```
-Open up gambleTestBot.py in a text editor and enter the bot access token in the place specified at the end of the file. More details on how to do that over at [Discord developer portal](https://discord.com/developers/docs/intro).
+Open up testingBot.py in a text editor and enter the bot access token in the place specified at the end of the file. More details on how to do that over at [Discord developer portal](https://discord.com/developers/docs/intro).
 
-After this, you're ready to run it!
+After this, you're ready to run it! You can also set bot prefix by changing the value of the variable at the beginning of the script. 
+
 
 ## Credits
 [nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API. Anilist for the waifu/anime-related stuff.
