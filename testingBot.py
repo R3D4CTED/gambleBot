@@ -99,10 +99,15 @@ async def on_message(message):
         print(waifu_name)
         waifu_info = searchWaifu(waifu_name)
         embedVar.set_thumbnail(url=waifu_info["image"]["large"])
-        embedVar.add_field(
-            name="Name:", value=waifu_info["name"]["full"]+"("+waifu_info["name"]["native"]+")", inline=False)
-        embedVar.add_field(name="Description:", value="||" +
-                           waifu_info["description"]+"||", inline=False)
+        
+        try:
+            embedVar.add_field(
+                name="Name:", value=waifu_info["name"]["full"]+"("+waifu_info["name"]["native"]+")", inline=False)
+        except:
+            embedVar.add_field(name="Name", value=waifu_info["name"]["full"], inline=False)
+            
+        # embedVar.add_field(name="Description:", value="||" +
+        #                   waifu_info["description"]+"||", inline=False)
         embedVar.add_field(name="Anilist URL:",
                            value=waifu_info["siteUrl"], inline=False)
 
