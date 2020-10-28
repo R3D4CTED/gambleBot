@@ -1,7 +1,6 @@
 import discord
 import random
 import requests
-import json
 import time
 from waifuUtils import *
 from anilistTest import searchWaifu
