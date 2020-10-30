@@ -1,9 +1,12 @@
+from typing import List
 import discord
 import random
+from discord import embeds
 import requests
 import time
+import asyncio
 from waifuUtils import *
-from anilistTest import searchWaifu
+from anilistTest import *
 
 client = discord.Client()
 botPrefix = '*'
@@ -12,6 +15,8 @@ botPrefix = '*'
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+
+
 
 
 @client.event
@@ -25,9 +30,10 @@ async def on_message(message):
                            value="Sends an image of a waifu.", inline=False)
         embedVar.add_field(name=botPrefix+"random N",
                            value="Generates a random number between 0 to N.", inline=False)
-        embedVar.add_field(name=botPrefix+"search CHARACTER_NAME",
-                           value="Searches info about character on anilist.(WIP)", inline=False)
-        embedVar.add_field(name=botPrefix+"waifus x", value="Generates waifu images with x seconds of delay between each.(WIP)")
+        embedVar.add_field(name=botPrefix+"find CHARACTER_NAME",
+                           value="Searches info about character on AniList and shows it in a slideshow.(WIP)", inline=False)
+        embedVar.add_field(name=botPrefix+"images",
+                           value="Generates waifu images.")
         # embedVar.add_field(
         #   name=botPrefix+"roulette [BET VALUE] or [BET COLOR]", value="WIP.", inline=False)
 
@@ -54,20 +60,45 @@ async def on_message(message):
         embedVar = discord.Embed(
             title="Waifu!", color=0x00ffcc).set_image(url=get_waifu())
 
-    if message.content.startswith(botPrefix+"waifus "):
-        waifus=get_waifus()["files"]
-        delay = int(message.content.split(' ')[1])
-        page_no=1
-        embedVar = discord.Embed(title="Waifus!", description="Requested by: "+message.author.display_name, color=0xfac105)
+    if message.content.startswith(botPrefix+"images"):
+        #Thank you Stalker and Subby senpai ~!
+        waifus = get_waifus()["files"]
+        waifuList = []
+        n=1
+        page_no = 1
+        embedVar = discord.Embed(
+            title="Waifus!", description="Requested by: "+message.author.display_name, color=0xfac105)
         msgId = await message.channel.send(embed=embedVar)
+        await msgId.add_reaction('⏮')
+        await msgId.add_reaction('🟥')
+        await msgId.add_reaction('⏭')
         for x in waifus:
-        	print(str(page_no)+" : "+x)
-        	embedVar.set_image(url=x)
-        	time.sleep(delay)
-        	await msgId.edit(embed=embedVar)
-        	page_no+=1
-
-
+            waifuList.append(x)
+            n+=1
+        
+        def check(reaction, user):
+            return user == message.author and str(reaction.emoji) in ['⏮', '⏭','🟥']
+        while True:
+            try:
+                reaction, user = await client.wait_for('reaction_add', timeout=30.0, check=check)
+            except asyncio.TimeoutError:
+                await msgId.delete()
+                break
+            else:
+                if (reaction.emoji == '⏭' and page_no <= n):
+                    page_no+=1
+                    embedVar.set_image(url=waifuList[page_no])
+                    await msgId.edit(embed=embedVar)
+                elif(reaction.emoji == '⏮' and page_no >= 1):
+                    page_no-=1
+                    embedVar.set_image(url=waifuList[page_no])
+                    await msgId.edit(embed=embedVar)
+                elif(reaction.emoji == '🟥'):
+                    await msgId.delete()
+                    break
+                await reaction.remove(message.author)
+                print(page_no)
+        
 
     if message.content.startswith(botPrefix+"roulette "):
         embedVar = discord.Embed(
@@ -98,21 +129,43 @@ async def on_message(message):
         print(waifu_name)
         waifu_info = searchWaifu(waifu_name)
         embedVar.set_thumbnail(url=waifu_info["image"]["large"])
-        
         try:
-            embedVar.add_field(
-                name="Name:", value=waifu_info["name"]["full"]+"("+waifu_info["name"]["native"]+")", inline=False)
+        	embedVar.add_field(
+            	name="Name:", value=waifu_info["name"]["full"]+"("+waifu_info["name"]["native"]+")", inline=False)
         except:
-            embedVar.add_field(name="Name", value=waifu_info["name"]["full"], inline=False)
-            
-        # embedVar.add_field(name="Description:", value="||" +
-        #                   waifu_info["description"]+"||", inline=False)
+        	embedVar.add_field(name="Name:", value= waifu_info["name"]["full"], inline=False)
         embedVar.add_field(name="Anilist URL:",
                            value=waifu_info["siteUrl"], inline=False)
+
+    if message.content.startswith(botPrefix+"find "):
+        message_content = message.content.split(' ')
+        waifu_name = ""
+        embedVar = discord.Embed(
+            title="Requested by:"+message.author.display_name, description="Waifu search!", color=0xff6ec7)
+        for temp in message_content:
+            if (temp != botPrefix+"find"):
+                waifu_name = waifu_name+temp+" "
+        print(waifu_name)
+        waifu_info = searchWaifus(waifu_name)
+        delay = 4
+        embedVar = discord.Embed(
+            title="Waifu search!", description="Results", color=0xff69b4).set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        msgId = await message.channel.send(embed=embedVar)
+        for waifu in waifu_info:
+            embedVar = discord.Embed(
+                title="Search Results.", description="Slideshow time: 4 seconds.", color=0xff69b4).set_thumbnail(url=waifu["image"]["large"]).set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+            embedVar.add_field(
+                name="Name:", value=waifu["name"]["full"], inline=False)
+            embedVar.add_field(name="Anilist URL:",
+                               value=waifu["siteUrl"], inline=False)
+            await msgId.edit(embed=embedVar)
+            time.sleep(5)
+        await msgId.delete()
 
     try:
         await message.channel.send(embed=embedVar)
     except:
         return
+ 
+client.run('BOT_API_KEY_HERE')
 
-client.run('BOT_API_HERE')
