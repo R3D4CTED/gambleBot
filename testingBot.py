@@ -99,25 +99,6 @@ async def on_message(message):
                 await reaction.remove(message.author)
                 print(page_no)
         
-
-    if message.content.startswith(botPrefix+"roulette "):
-        embedVar = discord.Embed(
-            title="Roulette.", description="Requested by:"+message.author.display_name, color=0xab3dff)
-        bet = message.content.split(' ')[1]
-        if (bet.isnumeric()):
-            if (int(bet) <= 37):
-                return
-            else:
-                embedVar.add_field(
-                    name="Roulette bet values range from 1 to 37.", value="Please try again.", inline=False)
-
-        elif (bet == "BLACK" or bet == "RED"):
-            return
-
-        else:
-            embedVar.add_field(name="You can't bet on that.",
-                               value="Try again.", inline=False)
-
     if message.content.startswith(botPrefix+"search "):
         message_content = message.content.split(' ')
         waifu_name = ""
