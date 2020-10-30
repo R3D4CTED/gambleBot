@@ -1,6 +1,4 @@
 import requests
-import time
-
 
 def searchWaifu(search_term):
     URL = 'https://graphql.anilist.co'
@@ -40,3 +38,29 @@ def searchWaifu(search_term):
     response = requests.post(
         URL, json={'query': query, 'variables': variables})
     return response.json()["data"]["Character"]
+
+
+def searchWaifus(search_term):
+    URL = 'https://graphql.anilist.co'
+    query = '''
+    query($term: String) {
+        Page(perPage: 10) {
+            characters(search: $term) {
+                siteUrl
+                image {
+                    large
+                }
+                name {
+                    full
+                    native
+                }
+            }
+        }
+    }
+    '''
+    variables = {
+        'term': search_term
+    }
+    response = requests.post(
+        URL, json={'query': query, 'variables': variables})
+    return response.json()["data"]["Page"]["characters"]
