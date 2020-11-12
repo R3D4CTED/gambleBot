@@ -22,7 +22,7 @@ After this, you're ready to run it! You can also set bot prefix by changing the 
 
 ## Credits
 [nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API. Anilist for the waifu/anime-related stuff.
-Respect and greetings to [Snaacky](https://github.com/snaacky), Stalker and Subby.
+Respect and greetings to [Snaacky](https://github.com/snaacky), [Stalker](https://github.com/JesseyWhite) and [Subby](https://github.com/callmekory)
 
 ### Further thoughts
 Might add the nhentai script in here. 🤔
