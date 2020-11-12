@@ -54,6 +54,14 @@ def searchWaifus(search_term):
                     full
                     native
                 }
+                media(sort:ID, type:ANIME, page:1, perPage: 1) {
+                    nodes {
+                        title {
+                            english
+                            userPreferred
+                        }
+                    }
+                }
             }
         }
     }
