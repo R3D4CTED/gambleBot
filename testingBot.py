@@ -6,16 +6,20 @@ import time
 import asyncio
 from waifuUtils import *
 from anilistTest import *
+from nhscript import *
 
 client = discord.Client()
 botPrefix = '*'
+botPrefixW = ')'
 
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     status = 'with [REDACTED]. *Nyaa ~*'
-    await client.change_presence(activity=discord.Game(name=status)) #set your custom status here. Displays as playing "status"
+    # set your custom status here. Displays as playing "status"
+    await client.change_presence(activity=discord.Game(name=status))
+    print(client.latency)
 
 
 @client.event
@@ -33,22 +37,27 @@ async def on_message(message):
                            value="Generates a random number between 0 to N.", inline=False)
         embedVar.add_field(name=botPrefix+"find CHARACTER_NAME",
                            value="Searches info about character on AniList.", inline=False)
-        #NSFW commands listing.
+        # NSFW commands listing.
         if message.channel.is_nsfw():
             embedVar.add_field(name="NSFW",
-                           value="These commands will work only in nsfw channels.", inline=False)
+                               value="These commands will work only in nsfw channels.", inline=False)
             embedVar.add_field(name=botPrefix+"get CHARACTER_NAME",
-                           value="Searches info about character on AniList, with a fanart image from Danbooru(WIP)", inline=False)
+                               value="Searches info about character on AniList, with a fanart image from Danbooru(WIP)", inline=False)
             embedVar.add_field(name=botPrefix+"xwaifu",
-                           value="Fetches one random NSFW waifu image.", inline=False)
+                               value="Fetches one random NSFW waifu image.", inline=False)
             embedVar.add_field(name=botPrefix+"ximages",
-                           value="Generates random NSFW waifus", inline=False)
+                               value="Generates random NSFW waifus", inline=False)
             embedVar.add_field(name=botPrefix+"danbooru TAG",
-                           value="Gets an image from Danbooru for the specified tag.", inline=False)
+                               value="Gets an image from Danbooru for the specified tag.", inline=False)
+            embedVar.add_field(name=botPrefix+"digit 6_DIGITS",
+                               value="Gets tags and information for the 6 digits provided.", inline=False)
 
-        #deprecated commands
+        # deprecated commands
         # embedVar.add_field(
         #   name=botPrefix+"roulette [BET VALUE] or [BET COLOR]", value="WIP.", inline=False)
+
+    if message.content.startswith(botPrefix+"ping"):
+        await message.channel.send("Pong ~ 🏓. Latency is:"+str(round(client.latency*1000))+"ms")
 
     if message.content.startswith(botPrefix+"random "):
         embedVar = discord.Embed(title="Requested by "+message.author.display_name,
@@ -116,7 +125,7 @@ async def on_message(message):
                     page_no -= 1
                     embedVar.set_image(url=waifuList[page_no])
                     await msgId.edit(embed=embedVar)
-                elif(reaction.emoji =='💾'):
+                elif(reaction.emoji == '💾'):
                     await message.channel.send(embed=embedVar)
                 elif(reaction.emoji == '🟥'):
                     await msgId.delete()
@@ -161,13 +170,31 @@ async def on_message(message):
                     page_no -= 1
                     embedVar.set_image(url=waifuList[page_no])
                     await msgId.edit(embed=embedVar)
-                elif(reaction.emoji =='💾'):
+                elif(reaction.emoji == '💾'):
                     await message.channel.send(embed=embedVar)
                 elif(reaction.emoji == '🟥'):
                     await msgId.delete()
                     return
                 await reaction.remove(message.author)
                 print(page_no)
+
+    if message.content.startswith(botPrefix+"roulette "):
+        embedVar = discord.Embed(
+            title="Roulette.", description="Requested by:"+message.author.display_name, color=0xab3dff)
+        bet = message.content.split(' ')[1]
+        if (bet.isnumeric()):
+            if (int(bet) <= 37):
+                return
+            else:
+                embedVar.add_field(
+                    name="Roulette bet values range from 1 to 37.", value="Please try again.", inline=False)
+
+        elif (bet == "BLACK" or bet == "RED"):
+            return
+
+        else:
+            embedVar.add_field(name="You can't bet on that.",
+                               value="Try again.", inline=False)
 
     if message.content.startswith(botPrefix+"find "):
         message_content = message.content.split(' ')
@@ -226,7 +253,7 @@ async def on_message(message):
                 elif(reaction.emoji == '⏮' and page_no >= 0):
                     page_no -= 1
 
-                elif(reaction.emoji =='💾'):
+                elif(reaction.emoji == '💾'):
                     await message.channel.send(embed=embedVar)
 
                 elif(reaction.emoji == '🟥'):
@@ -324,8 +351,8 @@ async def on_message(message):
 
                 elif(reaction.emoji == '⏮' and page_no >= 0):
                     page_no -= 1
-                
-                elif(reaction.emoji =='💾'):
+
+                elif(reaction.emoji == '💾'):
                     await message.channel.send(embed=embedVar)
 
                 elif(reaction.emoji == '🟥'):
@@ -357,7 +384,6 @@ async def on_message(message):
     if "nigg" in message.content.lower():
         embedVar = discord.Embed(title="OMG "+message.author.display_name+" said the n-word!",
                                  description="By: "+message.author.display_name, color=0xabcdef)
-
 
     if message.content.startswith(botPrefix+"danbooru "):
         channel = message.channel
@@ -429,10 +455,77 @@ async def on_message(message):
                 await msgId.edit(embed=embedVar)
                 await reaction.remove(message.author)
                 print(page_no)
+    
+    if message.content.startswith(botPrefix+"digit "):
+        channel = message.channel
+        if not channel.is_nsfw():
+            return
+
+        digit = message.content.split(' ')[1]
+        for x in {'nhentai', '9hentai', 'nyahentai'}:
+            embedVar = discord.Embed(title = x, description=print_info(digit, x))
+            await channel.send(embed=embedVar)
+        
+        return
+        
+
+
+    # Waifu Stuffs Here onwards.
+    if message.content.startswith(botPrefixW+"roll"):
+        waifu_info = generate_random_waifu()
+        embedVar = discord.Embed(title="Waifu roll!", description="Use 🎲 to roll, 💘 to catch.").set_author(
+            name=message.author).set_thumbnail(url=message.author.avatar_url)
+        msgId = await message.channel.send(embed=embedVar)
+        await msgId.add_reaction('🎲')
+        await msgId.add_reaction('💘')
+        await msgId.add_reaction('🟥')
+
+        def check(reaction, user):
+            return user == message.author and str(reaction.emoji) in ['🎲', '💘', '🟥']
+
+        while True:
+            embedVar = discord.Embed(title="Waifu roll!", description="Use 🎲 to roll, 💘 to catch.").set_author(
+                name=message.author).set_thumbnail(url=message.author.avatar_url)
+            try:
+                reaction, user = await client.wait_for('reaction_add', timeout=30.0, check=check)
+            except asyncio.TimeoutError:
+                await msgId.delete()
+                break
+            else:
+                embedVar = discord.Embed(title="Waifu roll!", description="Use 🎲 to roll, 💘 to catch.").set_author(
+                    name=message.author).set_thumbnail(url=message.author.avatar_url)
+                if (reaction.emoji == '🎲'):
+                    waifu_info = generate_random_waifu()
+                    try:
+                        embedVar.set_thumbnail(url=waifu_info["image"]["large"]).add_field(
+                            name=waifu_info["name"]["full"], value=waifu_info["media"]["nodes"][0]["title"]["userPreferred"])
+                    except:
+                        anime = ""
+                        for x in waifu_info["media"]["nodes"]:
+                            if len(x) != 0:
+                                anime = x
+                                break
+                        embedVar.set_thumbnail(url=waifu_info["image"]["large"]).add_field(
+                            name=waifu_info["name"]["full"], value=anime)
+
+                elif (reaction.emoji == '💘'):
+                    await msgId.delete()
+                    await message.channel.send("💘 **"+message.author.display_name+"** claimed **"+waifu_info["name"]["full"]+"**.")
+                    return
+                elif (reaction.emoji == '🟥'):
+                    await msgId.delete()
+                    return
+
+                try:
+                    await msgId.edit(embed=embedVar)
+                except:
+                    await reaction.remove(message.author)
+                    continue
+                await reaction.remove(message.author)
 
     try:
         await message.channel.send(embed=embedVar)
     except:
         return
 
-client.run('BOT_API_KEY_HERE')
+client.run('API_KEY_HERE')
