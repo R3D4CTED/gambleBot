@@ -6,6 +6,7 @@ A multifeatured Discord bot written in discord.py mainly aimed at gambling games
 discord.py
 requests
 pybooru
+bs4
 ```
 
 ## Installation
@@ -14,6 +15,7 @@ Install dependencies using:
 pip install requests
 pip install discord.py
 pip install pybooru
+pip install bs4
 ```
 Open up testingBot.py in a text editor and enter the bot access token in the place specified at the end of the file. More details on how to do that over at [Discord developer portal](https://discord.com/developers/docs/intro).
 
@@ -25,5 +27,4 @@ After this, you're ready to run it! You can also set bot prefix by changing the 
 Respect and greetings to [Snaacky](https://github.com/snaacky), [Stalker](https://github.com/JesseyWhite) and [Subby](https://github.com/callmekory)
 
 ### Further thoughts
-Might add the nhentai script in here. 🤔
 Working on a waifu roulette.
