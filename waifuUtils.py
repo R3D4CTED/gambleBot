@@ -1,7 +1,8 @@
-from anilistTest import searchWaifus
+from anilistTest import *
 import discord
 from pybooru import Danbooru
 import requests
+import random
 
 def get_waifus(blacklist: list=[]) -> dict:
     """OPTIONAL: blacklist are URL's to not be received."""
@@ -100,3 +101,15 @@ def get_from_danbooru(char_name, anime_name):
     posts=client.post_list(tags=tag, random=True, raw=True)
     #print(posts[0]['large_file_url'])
     return posts
+
+#the beginnings of waifu roulette. Code needs to be refined for enhanced speed.
+def generate_random_waifu():
+    while True:
+        n = random.randint(1,100000)
+        waifu_info = get_waifuinfo_id(n)
+        try:
+            print(waifu_info["name"]["full"])
+            return waifu_info
+        except:
+            print("Nothing found for id="+str(n))
+            continue
