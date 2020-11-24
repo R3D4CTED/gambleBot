@@ -7,6 +7,7 @@ import asyncio
 from waifuUtils import *
 from anilistTest import *
 from nhscript import *
+from databaseUtils import *
 
 client = discord.Client()
 botPrefix = '*'
@@ -225,7 +226,7 @@ async def on_message(message):
 
         page_no = 0
         embedVar = discord.Embed(title="Waifu search!", description="Generating results...",
-                                 color=0xffabc7).set_thumbnail(url=waifu_image[page_no])
+                                 color=0xffabc7).set_image(url=waifu_image[page_no])
         embedVar.add_field(
             name="Name: ", value=waifu_names[page_no], inline=False)
         embedVar.add_field(name="Anime name:", value=waifu_anime[page_no])
@@ -262,7 +263,7 @@ async def on_message(message):
 
                 try:
                     embedVar = discord.Embed(title="Waifu search!", description="Generating results...",
-                                             color=0xffabc7).set_thumbnail(url=waifu_image[page_no])
+                                             color=0xffabc7).set_image(url=waifu_image[page_no])
                     embedVar.add_field(
                         name="Name: ", value=waifu_names[page_no], inline=False)
                     embedVar.add_field(name="Anime name:",
@@ -321,7 +322,7 @@ async def on_message(message):
         page_no = 0
         try:
             embedVar = discord.Embed(title="Waifu search!", description="Page "+str(page_no+1)+" of "+str(
-                len(waifu_names)), color=0xffabc7).set_thumbnail(url=danbooru_images[page_no])
+                len(waifu_names)), color=0xffabc7).set_image(url=danbooru_images[page_no])
         except:
             embedVar = discord.Embed(title="Waifu search!", description="Page "+str(
                 page_no+1)+" of "+str(len(waifu_names)), color=0xffabc7)
@@ -362,7 +363,7 @@ async def on_message(message):
                 try:
                     try:
                         embedVar = discord.Embed(title="Waifu search!", description="Page "+str(page_no+1)+" of "+str(
-                            len(waifu_names)), color=0xffabc7).set_thumbnail(url=danbooru_images[page_no])
+                            len(waifu_names)), color=0xffabc7).set_image(url=danbooru_images[page_no])
                     except:
                         embedVar = discord.Embed(title="Waifu search!", description="Page "+str(
                             page_no+1)+" of "+str(len(waifu_names)), color=0xffabc7)
@@ -455,26 +456,40 @@ async def on_message(message):
                 await msgId.edit(embed=embedVar)
                 await reaction.remove(message.author)
                 print(page_no)
-    
+
     if message.content.startswith(botPrefix+"digit "):
         channel = message.channel
         if not channel.is_nsfw():
             return
 
         digit = message.content.split(' ')[1]
+        if digit.isnumeric():
+            try:
+                insert_hentai(str(digit))
+            except:
+                print("Insertion failed. ID was:"+digit)
         for x in {'nhentai', '9hentai', 'nyahentai'}:
-            embedVar = discord.Embed(title = x, description=print_info(digit, x))
+            embedVar = discord.Embed(title=x, description=print_info(digit, x))
             await channel.send(embed=embedVar)
-        
-        return
-        
 
+        return
 
     # Waifu Stuffs Here onwards.
+    if message.content.startswith(botPrefixW+"help"):
+        embedVar = discord.Embed(title="Waifu Roulette Help!", color=0xFF6700).set_author(name=message.author, icon_url=message.author.avatar_url)
+        embedVar.add_field(name=botPrefixW+"roll", value="Starts the Waifu roulette.", inline=True)
+        embedVar.add_field(name=botPrefixW+"list", value="Lists all your claimed Waifus.", inline=True)
+    
     if message.content.startswith(botPrefixW+"roll"):
+        if(is_waifu_roll_in_progress(message.author.mention)):
+            await message.channel.send("❌ You already have a waifu roulette session in progress.")
+            return
+        else:
+            waifu_roll_in_progress(message.author.mention, True)
+
         waifu_info = generate_random_waifu()
         embedVar = discord.Embed(title="Waifu roll!", description="Use 🎲 to roll, 💘 to catch.").set_author(
-            name=message.author).set_thumbnail(url=message.author.avatar_url)
+            name=message.author, icon_url=message.author.avatar_url).set_image(url=message.author.avatar_url)
         msgId = await message.channel.send(embed=embedVar)
         await msgId.add_reaction('🎲')
         await msgId.add_reaction('💘')
@@ -485,35 +500,38 @@ async def on_message(message):
 
         while True:
             embedVar = discord.Embed(title="Waifu roll!", description="Use 🎲 to roll, 💘 to catch.").set_author(
-                name=message.author).set_thumbnail(url=message.author.avatar_url)
+                name=message.author, icon_url=message.author.avatar_url).set_image(url=message.author.avatar_url)
             try:
                 reaction, user = await client.wait_for('reaction_add', timeout=30.0, check=check)
             except asyncio.TimeoutError:
                 await msgId.delete()
-                break
+                waifu_roll_in_progress(message.author.mention, False)
+                return
+
             else:
                 embedVar = discord.Embed(title="Waifu roll!", description="Use 🎲 to roll, 💘 to catch.").set_author(
-                    name=message.author).set_thumbnail(url=message.author.avatar_url)
+                    name=message.author, icon_url=message.author.avatar_url).set_image(url=message.author.avatar_url)
+
                 if (reaction.emoji == '🎲'):
                     waifu_info = generate_random_waifu()
-                    try:
-                        embedVar.set_thumbnail(url=waifu_info["image"]["large"]).add_field(
-                            name=waifu_info["name"]["full"], value=waifu_info["media"]["nodes"][0]["title"]["userPreferred"])
-                    except:
-                        anime = ""
-                        for x in waifu_info["media"]["nodes"]:
-                            if len(x) != 0:
-                                anime = x
-                                break
-                        embedVar.set_thumbnail(url=waifu_info["image"]["large"]).add_field(
-                            name=waifu_info["name"]["full"], value=anime)
+                    embedVar.set_image(url=waifu_info["image"]["large"]).add_field(
+                        name=waifu_info["name"]["full"], value=waifu_info["media"]["nodes"][0]["title"]["userPreferred"])
 
                 elif (reaction.emoji == '💘'):
                     await msgId.delete()
+                    waifu_roll_in_progress(message.author.mention, False)
                     await message.channel.send("💘 **"+message.author.display_name+"** claimed **"+waifu_info["name"]["full"]+"**.")
+                    try:
+                        claim_waifu(message.author.mention, waifu_info["id"])
+                        insert_waifu_data_into_db(waifu_info["id"], waifu_info["name"]["full"], waifu_info["image"]
+                                                  ["large"], waifu_info["media"]["nodes"][0]["title"]["userPreferred"])
+                    except:
+                        await message.channel.send("Something went wrong, your request has been saved and will be processed soon.")
+
                     return
                 elif (reaction.emoji == '🟥'):
                     await msgId.delete()
+                    waifu_roll_in_progress(message.author.mention, False)
                     return
 
                 try:
@@ -522,6 +540,64 @@ async def on_message(message):
                     await reaction.remove(message.author)
                     continue
                 await reaction.remove(message.author)
+    
+    if message.content.startswith(botPrefixW+"list"):
+        user_id = message.author.mention
+        waifu_ids = get_waifu_list_for_user(user_id)
+        if len(waifu_ids) == 0:
+            await message.channel.send(f"❌You seem to not have claimed any waifus. Use {botPrefixW}roll to claim a waifu and try again.")
+            return
+        page_no = 0
+        embedVar = discord.Embed(title=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["name"], description=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["anime_name"]).set_author(
+            icon_url=message.author.avatar_url, name=message.author).set_image(url=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["image_url"]).set_footer(text=botPrefixW+"roll to roll.")
+        msgId = await message.channel.send(embed=embedVar)
+        
+        await msgId.add_reaction('⏮')
+        await msgId.add_reaction('🟥')
+        await msgId.add_reaction('⏭')
+        await msgId.add_reaction('💾')
+
+        def check(reaction, user):
+            return user == message.author and str(reaction.emoji) in ['⏮', '⏭', '🟥', '💾']
+
+        while True:
+            embedVar = discord.Embed(title=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["name"], description=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["anime_name"]).set_author(
+                icon_url=message.author.avatar_url, name=message.author).set_image(url=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["image_url"]).set_footer(text=botPrefixW+"roll to roll.")
+            
+            try:
+                reaction, user = await client.wait_for('reaction_add', timeout=30.0, check=check)
+            except asyncio.TimeoutError:
+                await msgId.delete()
+                return
+            
+            else:
+                if(reaction.emoji == '⏮' and page_no>=0):
+                    page_no -= 1
+                
+                elif (reaction.emoji == '⏭' and page_no<=len(waifu_ids)-1):
+                    page_no+= 1
+                
+                elif(reaction.emoji == '🟥'):
+                    await msgId.delete()
+                    return
+                
+                if (page_no<0):
+                    page_no = 0
+                
+                elif (page_no>len(waifu_ids)-1):
+                    page_no = len(waifu_ids)-1
+                
+                embedVar = discord.Embed(title=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["name"], description=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["anime_name"]).set_author(
+                    icon_url=message.author.avatar_url, name=message.author).set_image(url=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["image_url"]).set_footer(text=botPrefixW+"roll to roll.")
+                
+                if(reaction.emoji == '💾'):
+                    await message.channel.send(embed=embedVar)
+                    await reaction.remove(message.author)
+                    continue
+                
+                await msgId.edit(embed=embedVar)
+                await reaction.remove(message.author)
+
 
     try:
         await message.channel.send(embed=embedVar)
