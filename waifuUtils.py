@@ -102,14 +102,8 @@ def get_from_danbooru(char_name, anime_name):
     #print(posts[0]['large_file_url'])
     return posts
 
-#the beginnings of waifu roulette. Code needs to be refined for enhanced speed.
 def generate_random_waifu():
     while True:
-        n = random.randint(1,100000)
+        n = random.randint(1,5000)
         waifu_info = get_waifuinfo_id(n)
-        try:
-            print(waifu_info["name"]["full"])
-            return waifu_info
-        except:
-            print("Nothing found for id="+str(n))
-            continue
+        return waifu_info
