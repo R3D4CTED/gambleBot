@@ -72,3 +72,41 @@ def searchWaifus(search_term):
     response = requests.post(
         URL, json={'query': query, 'variables': variables})
     return response.json()["data"]["Page"]["characters"]
+
+
+def get_waifuinfo_id(id):
+    URL = 'https://graphql.anilist.co'
+    print(id)
+    query = '''
+    query($id: Int) {
+        Page(page:$id, perPage:1) {
+            characters(sort:FAVOURITES_DESC) {
+                id
+                siteUrl
+                image {
+                    large
+                }
+                name{
+                    full
+                }
+                media(perPage: 1, sort: POPULARITY_DESC) {
+			        nodes {
+					    title {
+				  	        userPreferred
+					    }
+			        }
+                }
+            }
+        }
+    }
+    '''
+    variables = {
+        'id': id
+    }
+
+    response = requests.post(
+        URL, json={'query': query, 'variables': variables})
+    try:
+        return response.json()["data"]["Page"]["characters"][0]
+    except:
+        return
