@@ -1,4 +1,6 @@
 import pymongo
+from datetime import *
+import time
 
 #Remote declarations.
 client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -7,6 +9,8 @@ waifudb = client['waifu']
 userdb = waifudb['user_data']
 waifu_datadb = waifudb['waifu_data_db']
 roll_statsdb = waifudb['roll_stats']
+rate_limitdb = waifudb['rate_limits']
+time_limit = 150
 
 def waifu_roll_in_progress(user_id, is_in_progress):
     insertion = {
@@ -68,3 +72,42 @@ def get_waifu_data_from_db(anilist_id):
         'anilist_id' : anilist_id
     }
     return waifu_datadb.find_one(query)
+
+def set_roll_rate_limit(user_id):
+    query = {
+        "user_id" : user_id
+    }
+    insertion = {
+        "user_id" : user_id,
+        "time_rolled_last" : datetime.now()
+    }
+    
+    if (len(list(rate_limitdb.find(query))) == 0):
+        rate_limitdb.insert_one(insertion)
+    
+    else:
+        rate_limitdb.find_one_and_replace(query, insertion)
+
+def is_rate_limited(user_id):
+    query = {
+        "user_id" : user_id
+    }
+    try:
+        rate_time = rate_limitdb.find_one(query)["time_rolled_last"]
+    except:
+        return False
+    
+    time_diff = int((datetime.now() - rate_time).total_seconds())
+    if(time_diff< time_limit):
+        return True
+    
+    else:
+        return False
+
+def get_time_left(user_id):
+    query = {
+        "user_id" : user_id
+    }
+    rate_time = rate_limitdb.find_one(query)["time_rolled_last"]
+    time_diff = int((datetime.now() - rate_time).total_seconds())
+    return str(time_limit-time_diff)
