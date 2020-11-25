@@ -481,11 +481,23 @@ async def on_message(message):
         embedVar.add_field(name=botPrefixW+"list", value="Lists all your claimed Waifus.", inline=True)
     
     if message.content.startswith(botPrefixW+"roll"):
+        roll_limit = 10
+        n = 0
         if(is_waifu_roll_in_progress(message.author.mention)):
             await message.channel.send("❌ You already have a waifu roulette session in progress.")
             return
+
         else:
             waifu_roll_in_progress(message.author.mention, True)
+        
+        if(is_rate_limited(message.author.mention)):
+            await message.channel.send(f"❌ You are rolling too much. Try again in {get_time_left(message.author.mention)} seconds.")
+            waifu_roll_in_progress(message.author.mention, False)
+            return
+        
+        else:
+            set_roll_rate_limit(message.author.mention)
+
 
         waifu_info = generate_random_waifu()
         embedVar = discord.Embed(title="Waifu roll!", description="Use 🎲 to roll, 💘 to catch.").set_author(
@@ -513,7 +525,12 @@ async def on_message(message):
                     name=message.author, icon_url=message.author.avatar_url).set_image(url=message.author.avatar_url)
 
                 if (reaction.emoji == '🎲'):
+                    if (n>roll_limit):
+                        await message.channel.send(f"❌ {roll_limit} rolls per turn only.")
+                        await reaction.remove(message.author)
+                        continue
                     waifu_info = generate_random_waifu()
+                    n += 1
                     embedVar.set_image(url=waifu_info["image"]["large"]).add_field(
                         name=waifu_info["name"]["full"], value=waifu_info["media"]["nodes"][0]["title"]["userPreferred"])
 
@@ -604,4 +621,4 @@ async def on_message(message):
     except:
         return
 
-client.run('API_KEY_HERE')
+client.run('CLIENT_API_KEY_HERE')
