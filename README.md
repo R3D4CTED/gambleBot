@@ -29,8 +29,8 @@ After this, you're ready to run it! You can also set bot prefix by changing the 
 
 
 ## Credits
-[nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API. [Anilist](https://anilist.co/) for the waifu/anime-related stuff.
+[nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API. [Anilist](https://anilist.co/) for the waifu/anime-related API. [Danbooru](https://danbooru.donmai.us/) for the dedicated NSFW image providing.
 Respect and greetings to [Snaacky](https://github.com/snaacky), [Stalker](https://github.com/JesseyWhite) and [Subby](https://github.com/callmekory)
 
 ### Further thoughts
-Working on a waifu roulette.
+Working on a waifu roulette with more features than other alternatives and being FOSS all the way!
