@@ -2,3 +2,4 @@ discord.py
 requests
 pybooru
 bs4
+pymongo
