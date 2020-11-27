@@ -15,11 +15,7 @@ bs4
 ## Installation
 Install dependencies using:
 ```
-pip install requests
-pip install discord.py
-pip install pybooru
-pip install bs4
-pip install pymongo
+pip install -r requirements.txt
 ```
 Make sure you have MongoDB server running on port 27017 and check whether it is accessible before you launch the bot.
 
