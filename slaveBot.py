@@ -13,6 +13,7 @@ from databaseUtils import *
 
 description = "Bot written for gambling games, weebs and administration."
 token = 'BOT_API_KEY_HERE'
+presence_name = "with [REDACTED]." #defines the the presence Playing with X.
 
 intents = discord.Intents.default()
 
@@ -24,7 +25,8 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    await bot.change_presence(activity=discord.Game(name="with [REDACTED]."))
+    
+    await bot.change_presence(activity=discord.Game(name=presence_name))
 
 """
 @bot.command(description="Returns help.")
