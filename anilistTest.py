@@ -45,7 +45,7 @@ def searchWaifus(search_term):
     query = '''
     query($term: String) {
         Page(perPage: 10) {
-            characters(search: $term) {
+            characters(search: $term, sort: FAVOURITES_DESC) {
                 siteUrl
                 image {
                     large
@@ -54,7 +54,7 @@ def searchWaifus(search_term):
                     full
                     native
                 }
-                media(sort:ID, type:ANIME, page:1, perPage: 1) {
+                media(sort:POPULARITY_DESC, type:ANIME, page: 1, perPage: 1) {
                     nodes {
                         title {
                             english
@@ -110,3 +110,39 @@ def get_waifuinfo_id(id):
         return response.json()["data"]["Page"]["characters"][0]
     except:
         return
+
+
+def get_waifu_info_for_id(id):
+    URL = 'https://graphql.anilist.co'
+    print(id)
+    query = '''
+    query($id: Int) {
+        Character(id : $id) {
+            id
+            siteUrl
+            image {
+                large
+            }
+            name {
+                full
+            }
+            media(perPage: 1, sort: POPULARITY_DESC) {
+			    nodes {
+					title {
+				  	     userPreferred
+					}
+			    }
+            }
+        }
+    }
+    '''
+    variables = {
+        'id': id
+    }
+    header = {
+        'Raise-Rate-Limit' : "300"
+    }
+
+    response = requests.post(
+        URL, json={'query': query, 'variables': variables}, headers=header)
+    return response.json()["data"]["Character"]
