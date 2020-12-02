@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ```
 Make sure you have MongoDB server running on port 27017 and check whether it is accessible before you launch the bot.
 
-Open up testingBot.py in a text editor and enter the bot access token in the place specified at the end of the file. More details on how to get one at [Discord developer portal](https://discord.com/developers/docs/intro).
+Open up slaveBot.py in a text editor and enter the bot access token in the place specified at the end of the file. More details on how to get one at [Discord developer portal](https://discord.com/developers/docs/intro).
 
 After this, you're ready to run it! You can also set bot prefix by changing the value of the variable at the beginning of the script. 
 
