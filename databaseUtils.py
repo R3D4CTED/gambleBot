@@ -52,6 +52,13 @@ def claim_waifu(user_id, anilist_id):
     }
     userdb.insert_one(insertion)
 
+def remove_waifu(user_id, anilist_id):
+    removal = {
+        "user_id" : user_id,
+        "anilist_id" : anilist_id
+    }
+    userdb.find_one_and_delete(removal)
+
 def get_waifu_list_for_user(user_id):
     query = {
         'user_id' : user_id
@@ -65,7 +72,8 @@ def insert_waifu_data_into_db(anilist_id, name, image_url, anime_name):
         'anime_name' : anime_name,
         'image_url' : image_url
     }
-    waifu_datadb.insert_one(insertion)
+    if (len(list(waifu_datadb.find(insertion))) == 0):
+        waifu_datadb.insert_one(insertion)
 
 def get_waifu_data_from_db(anilist_id):
     query = {
@@ -111,3 +119,7 @@ def get_time_left(user_id):
     rate_time = rate_limitdb.find_one(query)["time_rolled_last"]
     time_diff = int((datetime.now() - rate_time).total_seconds())
     return str(time_limit-time_diff)
+
+def reset_user_roll_stats():
+    rate_limitdb.drop()
+    roll_statsdb.drop()
