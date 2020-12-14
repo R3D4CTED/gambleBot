@@ -7,6 +7,7 @@ discord.py
 requests
 pybooru
 bs4
+saucenao-api
 ```
 [MongoDB](https://www.mongodb.com/try/download/community).
 
