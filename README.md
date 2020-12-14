@@ -26,7 +26,7 @@ After this, you're ready to run it! You can also set bot prefix by changing the 
 
 
 ## Credits
-[nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API. [Anilist](https://anilist.co/) for the waifu/anime-related API. [Danbooru](https://danbooru.donmai.us/) for the dedicated NSFW image providing.
+[nekos.life](https://nekos.life) and [waifu.pics](https://waifu.pics) for the image API. [Anilist](https://anilist.co/) for the waifu/anime-related API. [Danbooru](https://danbooru.donmai.us/) for the dedicated NSFW image providing. [SauceNao](https://saucenao.com/) for the sauce search.
 Respect and greetings to [Snaacky](https://github.com/snaacky), [Stalker](https://github.com/JesseyWhite) and [Subby](https://github.com/callmekory)
 
 ### Further thoughts
@@ -43,6 +43,7 @@ Assuming that "\*" is the command prefix.
 *neko => 1 random nekomimi image from nekos.life
 *images => Batch of waifu images from waifu.pics in a paginator form.
 *find "CHARACTER NAME" => Fetches information about a character on AniList.
+*sauce IMAGE_URL => Fetches the sauce of the image, if possible. Powered by SauceNao.
 
 --GENERAL/NSFW--
 *xwaifu => 1 random NSFW waifu image from waifu.pics
