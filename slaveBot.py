@@ -13,6 +13,7 @@ from databaseUtils import *
 
 description = "Bot written for gambling games, weebs and administration."
 presence_name = "with [REDACTED]." #defines presence playing with X
+token = API_KEY_HERE #enter your bot API key here.
 
 intents = discord.Intents.default()
 
