@@ -6,6 +6,7 @@ A multifeatured Discord bot written in discord.py mainly aimed at gambling games
 discord.py
 requests
 pybooru
+pymongo
 bs4
 saucenao-api
 ```
