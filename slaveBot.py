@@ -12,8 +12,7 @@ from nhscript import *
 from databaseUtils import *
 
 description = "Bot written for gambling games, weebs and administration."
-token = 'BOT_API_KEY_HERE'
-presence_name = "with [REDACTED]." #defines the the presence Playing with X.
+presence_name = "with [REDACTED]." #defines presence playing with X
 
 intents = discord.Intents.default()
 
@@ -25,7 +24,6 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    
     await bot.change_presence(activity=discord.Game(name=presence_name))
 
 """
@@ -52,7 +50,7 @@ async def rand(ctx, n: float):
 @bot.command(description="Generates random waifu image.")
 async def waifu(ctx):
     waifu_url = get_waifu()
-    print(waifu_url)
+    print("Waifu Image URL:"+waifu_url)
     embedVar = discord.Embed(
             title="Waifu!", color=0x00ffcc).set_image(url=waifu_url).set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
     await ctx.send(embed=embedVar)
@@ -65,12 +63,11 @@ async def neko(ctx):
         title="Nekos!", description="Nyaa ~", color=0xccff00).set_image(url=neko_url).set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
     await ctx.send(embed=embedVar)
 
-@bot.command(description="Gets NSFW waifu images.")
+@bot.command(description="Gets NSFW waifu image.")
 async def xwaifu(ctx):
     if not ctx.channel.is_nsfw():
         await ctx.send("❌ This command can only be run in an NSFW channel.")
         return
-    
     xwaifu_url = get_xwaifu()
     print(xwaifu_url)
     embedVar = discord.Embed(
@@ -339,6 +336,23 @@ async def digits(ctx, digit: str):
             embedVar = discord.Embed(title=x, description=print_info(digit, x)).set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embedVar)
 
+@bot.command(description="Gets sauce for image URL.")
+async def sauce(ctx, url : str):
+    result = get_sauce(url)
+    try:
+        embedVar = discord.Embed(title="Sauce found!", description=f"Given image URL:[Link]({url})", color=0xAB53FF).set_author(name=ctx.author, icon_url=ctx.author.avatar_url).set_thumbnail(url=result.thumbnail)
+        embedVar.add_field(name="Title:", value=f"{result.title}", inline=True)
+        embedVar.add_field(name="Author:", value=f"{result.author}", inline=True)
+        embedVar.add_field(name="Similarity:", value=f"{result.similarity}%", inline=False)
+        embedVar.add_field(name="Results:", value=f"[Link]({result.urls[0]})", inline=False)
+        embedVar.set_footer(text="Image search provided by SauceNao.")
+    except:
+        await ctx.send("❌ Not found. Try on IQDB.")
+        return
+    
+    await ctx.send(embed=embedVar)
+
+
 @bot.group(description="Waifu Roulette Commands Group.")
 async def w(ctx):
     if ctx.invoked_subcommand is None:
@@ -363,7 +377,6 @@ async def _roll(ctx):
     
     else:
         set_roll_rate_limit(user_id)
-
 
     try:
         waifu_info = generate_random_waifu()
@@ -442,7 +455,7 @@ async def _list(ctx):
     user_id = ctx.author.id
     waifu_ids = get_waifu_list_for_user(user_id)
     if len(waifu_ids) == 0:
-        await ctx.send(f"❌You seem to not have claimed any waifus. Use ``{bot.command_prefix}roulette roll`` to claim a waifu and try again.")
+        await ctx.send(f"❌You seem to not have claimed any waifus. Use ``{bot.command_prefix}w roll`` to claim a waifu and try again.")
         return
     page_no = 0
     embedVar = discord.Embed(title=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["name"], description=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["anime_name"]).set_author(
@@ -452,10 +465,11 @@ async def _list(ctx):
     await msgId.add_reaction('⏮')
     await msgId.add_reaction('🟥')
     await msgId.add_reaction('⏭')
+    await msgId.add_reaction('💔')
     await msgId.add_reaction('💾')
 
     def check(reaction, user):
-        return user == ctx.author and str(reaction.emoji) in ['⏮', '⏭', '🟥', '💾']
+        return user == ctx.author and str(reaction.emoji) in ['⏮', '⏭', '🟥', '💾', '💔']
 
     while True:
         embedVar = discord.Embed(title=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["name"], description=get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["anime_name"]).set_author(
@@ -491,6 +505,18 @@ async def _list(ctx):
                 await ctx.send(embed=embedVar)
                 await reaction.remove(ctx.author)
                 continue
+
+            if (reaction.emoji == '💔'):
+                try:
+                    remove_waifu(ctx.author.id, waifu_ids[page_no]["anilist_id"])
+                except:
+                    await ctx.send("An error occurred. Please try again.")
+                    await msgId.delete()
+
+                waifu_name = get_waifu_data_from_db(waifu_ids[page_no]["anilist_id"])["name"]
+                await ctx.send(f"<@!{ctx.author.id}> dumped **{waifu_name}**.")
+                await msgId.delete()
+                return
             
             await msgId.edit(embed=embedVar)
             await reaction.remove(ctx.author)
