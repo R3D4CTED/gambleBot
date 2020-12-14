@@ -3,3 +3,4 @@ requests
 pybooru
 bs4
 pymongo
+saucenao-api
