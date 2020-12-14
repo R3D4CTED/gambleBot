@@ -10,6 +10,8 @@ userdb = waifudb['user_data']
 waifu_datadb = waifudb['waifu_data_db']
 roll_statsdb = waifudb['roll_stats']
 rate_limitdb = waifudb['rate_limits']
+waifu_tierdb = waifudb['waifu_tier_db']
+
 time_limit = 150
 
 def waifu_roll_in_progress(user_id, is_in_progress):
@@ -123,3 +125,22 @@ def get_time_left(user_id):
 def reset_user_roll_stats():
     rate_limitdb.drop()
     roll_statsdb.drop()
+
+def user_stats_from_db(user_id):
+    query = {
+        "user_id" : user_id
+    }
+    #TBD
+
+def insert_waifu_pos_data(anilist_id, pos):
+    insertion = {
+        "anilist_id" : anilist_id,
+        "pos" : pos
+    }
+    waifu_tierdb.insert_one(insertion)
+
+def get_user_stats(user_id):
+    query = {
+        "user_id" : user_id
+    }
+    user_data = {"number_of_waifus" : len(list(userdb.find(query)))}
