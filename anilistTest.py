@@ -103,9 +103,12 @@ def get_waifuinfo_id(id):
     variables = {
         'id': id
     }
+    header = {
+        'Raise-Rate-Limit' : "300"
+    }
 
     response = requests.post(
-        URL, json={'query': query, 'variables': variables})
+        URL, json={'query': query, 'variables': variables}, headers = header)
     try:
         return response.json()["data"]["Page"]["characters"][0]
     except:
@@ -142,7 +145,9 @@ def get_waifu_info_for_id(id):
     header = {
         'Raise-Rate-Limit' : "300"
     }
-
     response = requests.post(
-        URL, json={'query': query, 'variables': variables}, headers=header)
+        URL, json={'query': query, 'variables': variables}, headers = header)
+    print(response.json())
+    print("Was able to make request. Name="+response.json()["data"]["Character"]["name"]["full"])
+    print("Image URL="+response.json()["data"]["Character"]["image"]["large"])
     return response.json()["data"]["Character"]
