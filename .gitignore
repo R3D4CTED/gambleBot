@@ -4,3 +4,4 @@ accounts/
 gclone.exe
 log.txt
 rc.conf
+utils/gc_utils.py
