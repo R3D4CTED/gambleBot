@@ -6,6 +6,7 @@ import glob
 import re
 
 import discord
+from utils import embeds
 from discord.ext import commands
 from discord.ext.commands.core import is_owner
 
@@ -64,7 +65,8 @@ class UtilitiesCog(commands.Cog):
             '_': self._last_result
         }
         # Creating embed.
-        embed = discord.Embed(title="Evaluating.", color=0xb134eb)
+        embed = embeds.make_embed(title="Evaluating", context=ctx)
+        embed.color = 0xb134eb
         env.update(globals())
 
         # Calling cleanup command to remove the markdown traces.
