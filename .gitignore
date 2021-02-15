@@ -1,0 +1,6 @@
+config.py
+__pycache/
+accounts/
+gclone.exe
+log.txt
+rc.conf
