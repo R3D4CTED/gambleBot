@@ -1,5 +1,5 @@
 config.py
-__pycache/
+__pycache__/
 accounts/
 gclone.exe
 log.txt
