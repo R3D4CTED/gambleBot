@@ -1,0 +1,13 @@
+
+bot:
+  prefix: "*"
+  token: !ENV "BOT_TOKEN" # REQUIRED
+  log_level: !ENV "LOG_LEVEL" "DEBUG"
+  
+database:
+  db_port: 27017
+  db_user: !ENV "DB_USER" # REQUIRED
+  db_pass: !ENV "DB_PASS" # REQUIRED
+
+config:
+  required_keys: ['bot.token', 'database.db_user', 'database.db_pass']
