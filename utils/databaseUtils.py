@@ -1,9 +1,11 @@
 import pymongo
+import constants
 from datetime import *
 import time
 
 #Remote declarations.
-client = pymongo.MongoClient("mongodb://localhost:27017/")
+db_url = f"mongodb://localhost:{constants.Database.port}/"
+client = pymongo.MongoClient(db_url, user=constants.Database.db_user, pass=constants.Database.db_pass)
 print(client.list_database_names())
 waifudb = client['waifu']
 userdb = waifudb['user_data']

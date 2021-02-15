@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
-import config
+import constants
 import glob
 
 bot = commands.Bot(
-    command_prefix=config.BOT_PREFIX,
+    command_prefix=constants.Bot.prefix,
     intents=discord.Intents(messages=True, guilds=True, members=True, bans=True, reactions=True),
     case_insensitive=True)
 
@@ -16,8 +16,7 @@ async def on_ready():
     """
     print(f"Logged in as: {bot.user.name}#{bot.user.discriminator}")
     print(f"discord.py version: {discord.__version__}\n")
-    s = "Gei"
-    s.encode(encoding="utf-8")
+
     # Adding in a activity message when the bot begins.
     await bot.change_presence(
         activity=discord.Activity(
@@ -40,5 +39,5 @@ if __name__ == '__main__':
             continue
 
     # Finally, run the bot.
-    bot.run(config.BOT_TOKEN)
+    bot.run(constants.Bot.token)
 
