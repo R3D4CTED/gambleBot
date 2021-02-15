@@ -52,15 +52,6 @@ class GcloneCommandsCog(commands.Cog):
             await msg.edit(embed=embed)
             await asyncio.sleep(2)
 
-        file = open("log.txt", "w", encoding="utf-8")
-        try:
-            file.write(process.stdout.read())
-            file.close()
-            await ctx.send(file=discord.File("log.txt"))
-        except:
-            await ctx.send("Error processing log.")
-
-        
     
 def setup(bot) -> None:
     """ Load the GeneralCog cog. """
