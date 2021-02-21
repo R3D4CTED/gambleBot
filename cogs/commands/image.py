@@ -1,10 +1,14 @@
 import discord
 from discord import Color
 from discord.ext import commands
+import logging
 
 from utils import embeds
 from utils import imageFetchUtils
 from utils import checks
+from utils.record import record_usage
+
+log = logging.getLogger(__name__)
 
 class ImageCommandsCog(commands.Cog):
     """SimpleCog"""
@@ -12,6 +16,7 @@ class ImageCommandsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.before_invoke(record_usage)
     @commands.command(name="neko", aliases=['nyan', 'nyaa', 'nya'])
     async def neko(self, ctx):
         """ Displays cute Nekomimis! """
@@ -19,6 +24,7 @@ class ImageCommandsCog(commands.Cog):
         embed.color = discord.Color(0xccff00)
         await ctx.send(embed=embed)
 
+    @commands.before_invoke(record_usage)
     @commands.command(name="waifu")
     async def waifu(self, ctx):
         """ Displays waifu pics! """
@@ -26,6 +32,7 @@ class ImageCommandsCog(commands.Cog):
         embed.color = discord.Color(0x00ffcc)
         await ctx.send(embed=embed)
     
+    @commands.before_invoke(record_usage)
     @commands.check(checks.is_nsfw)
     @commands.command(name="xneko", aliases=['xnyan', 'xnyaa', 'xnya', 'nyanx', 'nyaax', 'nyax', 'nekox'])
     async def xneko(self, ctx):
@@ -35,6 +42,7 @@ class ImageCommandsCog(commands.Cog):
         embed.color = discord.Color(0xccff00)
         await ctx.send(embed=embed)
 
+    @commands.before_invoke(record_usage)
     @commands.check(checks.is_nsfw)
     @commands.command(name="xwaifu", aliases=['waifux'])
     async def xwaifu(self, ctx):
@@ -50,4 +58,4 @@ class ImageCommandsCog(commands.Cog):
 def setup(bot) -> None:
     """Load the SimpleCog cog."""
     bot.add_cog(ImageCommandsCog(bot))
-    print("Loaded Image Commands Cog.")
+    log.info("Loaded Image Commands Cog.")

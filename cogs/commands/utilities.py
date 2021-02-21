@@ -4,13 +4,15 @@ import textwrap
 from contextlib import redirect_stdout
 import glob
 import re
+import logging
+from utils.record import record_usage
 
 import discord
 from utils import embeds
 from discord.ext import commands
 from discord.ext.commands.core import is_owner
 
-
+log = logging.getLogger(__name__)
 
 class UtilitiesCog(commands.Cog):
     """UtilitiesCog"""
@@ -27,7 +29,7 @@ class UtilitiesCog(commands.Cog):
         # remove `foo`
         return content.strip('` \n')
 
-    
+    @commands.before_invoke(record_usage)
     @commands.is_owner()
     @commands.group(aliases=["u", "ul"])
     async def utilities(self, ctx):
@@ -190,3 +192,4 @@ class UtilitiesCog(commands.Cog):
 def setup(bot) -> None:
     """Load the UtilitiesCog cog."""
     bot.add_cog(UtilitiesCog(bot))
+    log.info("Loaded Utilities Cog.")

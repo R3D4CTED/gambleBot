@@ -3,6 +3,11 @@ from discord.ext import commands
 import constants
 import glob
 
+import __init__
+import logging
+
+log = logging.getLogger(__name__)
+
 bot = commands.Bot(
     command_prefix=constants.Bot.prefix,
     intents=discord.Intents(messages=True, guilds=True, members=True, bans=True, reactions=True),
@@ -14,8 +19,8 @@ async def on_ready():
     For more information:
     https://discordpy.readthedocs.io/en/stable/api.html#discord.on_ready
     """
-    print(f"Logged in as: {bot.user.name}#{bot.user.discriminator}")
-    print(f"discord.py version: {discord.__version__}\n")
+    log.info(f"Logged in as: {bot.user.name}#{bot.user.discriminator}")
+    log.info(f"discord.py version: {discord.__version__}\n")
 
     # Adding in a activity message when the bot begins.
     await bot.change_presence(
@@ -24,7 +29,6 @@ async def on_ready():
             name=f"with [REDACTED]."
         )
     )
-
 
 if __name__ == '__main__':
     # Recursively loads in all the cogs in the folder named cogs.

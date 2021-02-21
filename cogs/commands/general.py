@@ -1,16 +1,19 @@
 
+import logging
+from utils.record import record_usage
 from discord.ext import commands
 
 from utils import embeds
 
-
+log = logging.getLogger(__name__)
 
 
 class GeneralCommandsCog(commands.Cog):
     """GeneralCommandsCog"""
     def __init__(self, bot):
         self.bot = bot
-
+    
+    @commands.before_invoke(record_usage)
     @commands.command(name="pfp", aliases=["avi", "pp", "avatar", "profilepic"])
     async def pfp(self, ctx, user=None):
         """ Returns the profile picture of the invoker or the mentioned user. """
@@ -69,3 +72,4 @@ class GeneralCommandsCog(commands.Cog):
 def setup(bot) -> None:
     """ Load the GeneralCog cog. """
     bot.add_cog(GeneralCommandsCog(bot))
+    log.info("Loaded General Commands cog.")

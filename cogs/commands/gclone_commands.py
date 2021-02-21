@@ -1,15 +1,21 @@
 import asyncio
 import subprocess
+from utils.record import record_usage
 import discord
 from discord.ext import commands
+from os import path
 
 from utils import embeds
 from utils import gc_utils
 
+import logging
+
+log = logging.getLogger(__name__)
 
 class GcloneCommandsCog(commands.Cog):
     """GcloneCommandsCog"""
     
+    @commands.before_invoke(record_usage)
     @commands.is_owner()
     @commands.group(name="gclone", aliases=["g", "gc"])
     async def gclone(self, ctx):
@@ -54,6 +60,10 @@ class GcloneCommandsCog(commands.Cog):
 
     
 def setup(bot) -> None:
-    """ Load the GeneralCog cog. """
-    bot.add_cog(GcloneCommandsCog(bot))
-    print("Gclone Commands Cog Loaded.")
+    """ Load the GcloneCommandsCog cog. """
+    if (path.exists("accounts") and path.exists("gclone")):
+        bot.add_cog(GcloneCommandsCog(bot))
+        log.info("Loaded Gclone commands")
+        
+    else:
+        log.error("Gclone commands cogs was not loaded.")
