@@ -2,7 +2,7 @@
 bot:
   prefix: "*"
   token: !ENV "BOT_TOKEN" # REQUIRED
-  log_level: !ENV "LOG_LEVEL" "DEBUG"
+  log_level: !ENV "LOG_LEVEL"
   
 database:
   db_port: 27017

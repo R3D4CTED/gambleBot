@@ -7,3 +7,5 @@ rc.conf
 .vscode/
 slaveBot.py
 gc.py
+docker-compose.debug.yml
+database/

@@ -2,9 +2,16 @@
 This File is for demonstrating and used as a template for future cogs.
 """
 
-from discord.ext import commands
+import logging
 
+from discord.ext import commands
 from utils import embeds
+from utils.record import record_usage
+
+
+# Enabling logs
+log = logging.getLogger(__name__)
+
 
 class SimpleCog(commands.Cog):
     """SimpleCog"""
@@ -12,8 +19,7 @@ class SimpleCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
-
+    @commands.before_invoke(record_usage)
     @commands.command(name='repeat', aliases=['copy', 'mimic'])
     async def do_repeat(self, ctx, *, our_input: str):
         """A simple command which repeats our input.
@@ -21,8 +27,8 @@ class SimpleCog(commands.Cog):
 
         await ctx.send(our_input)
 
-
     # This is an example of a guild only command
+    @commands.before_invoke(record_usage)
     @commands.command(name='add', aliases=['plus'])
     @commands.guild_only()
     async def do_addition(self, ctx, first: int, second: int):
@@ -31,10 +37,21 @@ class SimpleCog(commands.Cog):
         total = first + second
         await ctx.send(f'The sum of **{first}** and **{second}**  is  **{total}**')
 
-    # This is an example of an embed-command
+    # This is an example of a Owner only command
+    @commands.before_invoke(record_usage)
+    @commands.command(name='me')
+    @commands.is_owner()
+    async def only_me(self, ctx):
+        """A simple command which only responds to the owner of the bot."""
+
+        await ctx.send(f'Hello {ctx.author.mention}. This command can only be used by you!!')
+
+    # This is an example of a embed command
+    @commands.before_invoke(record_usage)
     @commands.command(name='embeds')
     async def example_embed(self, ctx):
         """A simple command which showcases the use of embeds.
+
         Have a play around and visit the Visualizer."""
 
         embed = embeds.make_embed(ctx, title='Example Embed', description='Showcasing the use of Embeds...\n'
@@ -49,29 +66,23 @@ class SimpleCog(commands.Cog):
 
         await ctx.send(content='**A simple Embed for discord.py@rewrite in cogs.**', embed=embed)
 
-    # This is an example of a Owner only command
-    @commands.command(name='me')
-    @commands.is_owner()
-    async def only_me(self, ctx):
-        """A simple command which only responds to the owner of the bot."""
-
-        await ctx.send(f'Hello {ctx.author.mention}. This command can only be used by you!!')
-
-
     # Here is an example of a listener
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
         """Event Listener which is called when a user is banned from the guild.
         For this example I will keep things simple and just print some info.
         Notice how because we are in a cog class we do not need to use @bot.event
+
         For more information:
         http://discordpy.readthedocs.io/en/rewrite/api.html#discord.on_member_ban
+
         Check above for a list of events.
         """
 
         print(f'{user.name}-{user.id} was banned from {guild.name}-{guild.id}')
 
     # Here is an example of nested commands
+    @commands.before_invoke(record_usage)
     @commands.group()
     async def what(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -86,9 +97,9 @@ class SimpleCog(commands.Cog):
         await ctx.send('on Discord')
 
 
-
 # The setup function below is necessary. Remember we give bot.add_cog() the name of the class in this case SimpleCog.
 # When we load the cog, we use the name of the file.
 def setup(bot) -> None:
     """Load the SimpleCog cog."""
     bot.add_cog(SimpleCog(bot))
+    log.info("Cog loaded: SimpleCog")
