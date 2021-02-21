@@ -1,0 +1,8 @@
+# To ensure app dependencies are ported from your virtual environment/host machine into your container, run 'pip freeze > requirements.txt' in the terminal to overwrite this file
+discord
+pymongo
+PyYAML==5.4.1
+requests
+bs4
+saucenao-api
+coloredlogs
