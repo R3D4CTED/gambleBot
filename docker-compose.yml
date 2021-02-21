@@ -1,0 +1,41 @@
+# Docker Compose script to initialize the bot.
+# Make sure to set *all* the values in .env file
+# DB_ROOT_USER and DB_USER CANNOT have the same values
+# For passwords, it's recommended that you use https://www.grc.com/passwords.htm for cryptographic-strength passwords
+
+
+
+version: '3.4'
+
+  
+services:
+  db:
+    image: mongo
+    restart: always
+    container_name: mongo_db  
+    volumes: 
+      - ./database:/data/db
+      - ./mongo-entrypoint/:/docker-entrypoint-initdb.d/
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME : "${DB_ROOT_USER}" 
+      MONGO_INITDB_ROOT_PASSWORD : "${DB_ROOT_PASS}"
+      DB_USER : "${DB_USER}"
+      DB_PASS : "${DB_PASS}"
+     
+    command: mongod
+      
+
+  slave:
+    image: slave
+    depends_on: 
+      - db
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      BOT_TOKEN: '${BOT_TOKEN}' 
+      DB_USER: '${DB_USER}'
+      DB_PASS: '${DB_PASS}'
+      LOG_LEVEL: 'DEBUG'
+    
+      
