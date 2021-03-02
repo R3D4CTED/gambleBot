@@ -56,14 +56,12 @@ class GcloneCommandsCog(commands.Cog):
                     continue
             
             await msg.edit(embed=embed)
-            await asyncio.sleep(2)
 
     
 def setup(bot) -> None:
     """ Load the GcloneCommandsCog cog. """
-    if (path.exists("accounts") and path.exists("gclone")):
+    if (path.exists("accounts") and path.exists("gclone.exe")):
         bot.add_cog(GcloneCommandsCog(bot))
         log.info("Loaded Gclone commands")
-        
     else:
-        log.error("Gclone commands cogs was not loaded.")
+        log.error("Gclone executable and/or service accounts not found.")
