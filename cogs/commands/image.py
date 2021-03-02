@@ -11,7 +11,7 @@ from utils.record import record_usage
 log = logging.getLogger(__name__)
 
 class ImageCommandsCog(commands.Cog):
-    """SimpleCog"""
+    """For Image Commands."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -20,7 +20,8 @@ class ImageCommandsCog(commands.Cog):
     @commands.command(name="neko", aliases=['nyan', 'nyaa', 'nya'])
     async def neko(self, ctx):
         """ Displays cute Nekomimis! """
-        embed = embeds.make_embed(title="Nyaa ~", description="Nekomimis!", context=ctx).set_image(url=imageFetchUtils.get_neko())
+        async with ctx.typing():
+            embed = embeds.make_embed(title="Nyaa ~", description="Nekomimis!", context=ctx).set_image(url=imageFetchUtils.get_neko())
         embed.color = discord.Color(0xccff00)
         await ctx.send(embed=embed)
 
@@ -28,7 +29,8 @@ class ImageCommandsCog(commands.Cog):
     @commands.command(name="waifu")
     async def waifu(self, ctx):
         """ Displays waifu pics! """
-        embed = embeds.make_embed(title="Waifu!", context=ctx).set_image(url=imageFetchUtils.get_waifu())
+        async with ctx.typing():
+            embed = embeds.make_embed(title="Waifu!", context=ctx).set_image(url=imageFetchUtils.get_waifu())
         embed.color = discord.Color(0x00ffcc)
         await ctx.send(embed=embed)
     
@@ -38,7 +40,8 @@ class ImageCommandsCog(commands.Cog):
     async def xneko(self, ctx):
         
         """ Displays lewd Nekomimis! """
-        embed = embeds.make_embed(title="Nyaa ~", description="Lewd!", context=ctx).set_image(url=imageFetchUtils.get_xneko())
+        async with ctx.typing():
+            embed = embeds.make_embed(title="Nyaa ~", description="Lewd!", context=ctx).set_image(url=imageFetchUtils.get_xneko())
         embed.color = discord.Color(0xccff00)
         await ctx.send(embed=embed)
 
@@ -47,7 +50,9 @@ class ImageCommandsCog(commands.Cog):
     @commands.command(name="xwaifu", aliases=['waifux'])
     async def xwaifu(self, ctx):
         """ Displays lewd waifu pics! """
-        embed = embeds.make_embed(title="Waifu!", context=ctx).set_image(url=imageFetchUtils.get_waifu(lewd="nsfw"))
+        async with ctx.typing():
+            embed = embeds.make_embed(title="Waifu!", context=ctx).set_image(url=imageFetchUtils.get_waifu(lewd="nsfw"))
+        
         embed.color = discord.Color(0x00ffcc)
         await ctx.send(embed=embed)
     
