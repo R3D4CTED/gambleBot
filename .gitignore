@@ -9,6 +9,7 @@ slaveBot.py
 gc.py
 docker-compose.debug.yml
 database/
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
